@@ -62,10 +62,14 @@ class ViewController: UIViewController, UITableViewDelegate {
             let items = dbManager.getItems(selectedGroup.id)
             
             var curId = indexPath.row
+            
             for item in items {
-                objects.insert(item, atIndex: curId++)
-                let path = NSIndexPath(forRow: curId, inSection: 0)
+                print(item.content)
+                objects.insert(item, atIndex: curId + 1)
+
+                let path = NSIndexPath(forRow: curId + 1, inSection: 0)
                 indexArray.append(path)
+                curId++
             }
             print("selected")
         }
