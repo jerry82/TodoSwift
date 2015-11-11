@@ -96,7 +96,7 @@ class DBManager {
             let item = ItemModel()
             item.id = (Int)(rs.intForColumn("id"))
             item.content = rs.stringForColumn("content")
-            item.completed = rs.boolForColumn("completed")
+            item.completed = rs.intForColumn("completed") == 1 ? true : false
             item.type = ItemEnum.L2
             item.parentId = parentId
             items.append(item)
@@ -105,6 +105,20 @@ class DBManager {
         let _ : Bool = database.close()
         
         return items
+    }
+    
+    func updateItemStatus(item: ItemModel) {
+        if (!database.open()) {
+            print("Error: failed to open DB")
+            return
+        }
+        
+        let sql = "UPDATE item_table SET completed = ? WHERE id = ?"
+        let completed = item.completed ? 1 : 0
+        let args : [AnyObject] = [completed, item.id]
+        database.executeUpdate(sql, withArgumentsInArray: args)
+        
+        let _ : Bool = database.close()
     }
     
     func insertItem(item: ItemModel) {

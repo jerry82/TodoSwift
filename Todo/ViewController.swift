@@ -30,46 +30,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
         
+        /*
         let add = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addButtonTap:")
         self.navigationItem.rightBarButtonItem = add
-        /*
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         self.tableView.addGestureRecognizer(tap)
         */
         
         initObjects()
     }
-    
-    //hide and show add group item
-    func addButtonTap(sender: UIBarButtonItem) {
-        
-        if (objectTree.count > 0) {
-            if (objectTree[0].0.type == ItemEnum.L1_Dummy) {
-                self.removeDummyGroupItem()
-            }
-            else {
-                self.addDummyGroupItem()
-            }
-        }
-        else {
-            self.addDummyGroupItem()
-        }
-    }
-    
-    func addDummyGroupItem() {
-        let dummyGroup = ItemModel()
-        dummyGroup.id = -1
-        dummyGroup.type = ItemEnum.L1_Dummy
-        objectTree.insert((dummyGroup, [ItemModel]()), atIndex: 0)
-        self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
-    }
-    
-    func removeDummyGroupItem() {
-        objectTree.removeFirst()
-        self.tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
-    }
-    //---end---
-    
     
     //handle keyboard
     func dismissKeyboard() {
@@ -78,7 +47,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     func keyboardWillShow(notification: NSNotification) {
-        
         if (self.newGroupField != nil) {
             if (self.activeTextField == self.newGroupField) {
                 return
@@ -87,11 +55,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
             var frame = tableView.frame
-            /*
-            UIView.beginAnimations(nil, context: nil)
-            UIView.setAnimationBeginsFromCurrentState(true)
-            UIView.setAnimationDuration(0.1)
-            */
             frame.size.height -= keyboardSize.height
             self.tableView.frame = frame
             if (self.activeTextField != nil) {
@@ -106,6 +69,42 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         self.activeTextField = textField
     }
     
+    //textfield delegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        
+        if let newGroupF = self.newGroupField  {
+            if (textField == newGroupF) {
+                let newGroup = ItemModel()
+                newGroup.content = newGroupF.text!
+                dbManager.insertGroup(newGroup)
+                
+                initObjects()
+                self.tableView.reloadData()
+                newGroupF.text = ""
+                newGroupF.resignFirstResponder()
+                return true
+            }
+        }
+        
+        if let newItemF = self.newItemField {
+            if (textField == newItemF) {
+                if (newItemF.text != "") {
+                    let newItem = ItemModel()
+                    newItem.content = newItemF.text!
+                    newItem.completed = false
+                    newItem.parentId = self.currentSelectedGroupId
+                    newItem.type = ItemEnum.L2
+                    dbManager.insertItem(newItem)
+                    self.insertItem(newItem)
+                    newItemF.text = ""
+                    newItemF.resignFirstResponder()
+                }
+            }
+        }
+        
+        return true
+    }
+    
     func keyboardWillHide(notification: NSNotification) {
         
         if (self.newGroupField != nil) {
@@ -116,11 +115,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
             var frame = tableView.frame
-            /*
-            UIView.beginAnimations(nil, context: nil)
-            UIView.setAnimationBeginsFromCurrentState(true)
-            UIView.setAnimationDuration(0.1)
-            */
             frame.size.height += keyboardSize.height
             self.tableView.frame = frame
             UIView.commitAnimations()
@@ -137,50 +131,36 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell: CellObject = tableView.dequeueReusableCellWithIdentifier("Cell") as! CellObject
-        //UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "Cell")
-        
-        
         let flatArray = getFlatArray()
         let item = flatArray[indexPath.row]
         
-        switch (item.type) {
-        case ItemEnum.L1:
-            cell.sign.text = "+"
-            cell.contentLabel.text = item.content
-            cell.sign.hidden = false
-            cell.contentLabel.hidden = false
-            cell.newItem.hidden = true
-            cell.newSubItem.hidden = true
-            cell.selectionStyle = UITableViewCellSelectionStyle.Default
-        case ItemEnum.L2:
-            cell.sign.text = ""
-            cell.contentLabel.text = item.content
-            cell.sign.hidden = false
-            cell.contentLabel.hidden = false
-            cell.newItem.hidden = true
-            cell.newSubItem.hidden = true
-            cell.selectionStyle = UITableViewCellSelectionStyle.None
-        case ItemEnum.L1_Dummy:
-            cell.contentLabel.hidden = true
-            cell.sign.hidden = true
-            cell.newItem.hidden = false
-            cell.newSubItem.hidden = true
-            cell.selectionStyle = UITableViewCellSelectionStyle.None
+        cell.initWithStyle(item)
+        
+        if (item.type == ItemEnum.L1_Dummy) {
             cell.newItem.delegate = self
             self.newGroupField = cell.newItem
-        default:
-            cell.newSubItem.hidden = false
-            cell.contentLabel.hidden = true
-            cell.sign.hidden = true
-            cell.newItem.hidden = true
-            cell.newSubItem.placeholder = "Add Item Here"
+        }
+
+        if (item.type == ItemEnum.L2_Dummy) {
             cell.newSubItem.delegate = self
-            cell.selectionStyle = UITableViewCellSelectionStyle.None
             self.newItemField = cell.newSubItem
         }
         
         return cell
     }
+    
+    //only edit cell without no textfield
+    //throw un-necessary error
+    /*
+    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        let flatArray = self.getFlatArray()
+        
+        if (indexPath.row < flatArray.count) {
+            let type = flatArray[indexPath.row].type
+            return (type != ItemEnum.L2_Dummy && type != ItemEnum.L1_Dummy)
+        }
+        return false
+    }*/
     
     //delete cells
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
@@ -240,7 +220,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             self.newItemField.resignFirstResponder()
         }
         
-        
         let selectedId = getSelectedGroupId(indexPath.row)
         
         if (selectedId.0 != -1) {
@@ -288,6 +267,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
             }
         }
+        //select item: complete the item
+        else if (selectedId.1 != -1){
+            let cell: CellObject = self.tableView.cellForRowAtIndexPath(indexPath) as! CellObject
+            let item = self.getFlatArray()[indexPath.row]
+            item.completed = !item.completed
+            dbManager.updateItemStatus(item)
+            if (item.completed) {
+                cell.strikeText()
+            }
+            else {
+                cell.unStrikeText()
+            }
+        }
     }
     
     func collapseOtherCell(currentSelectedGroupId: Int) {
@@ -323,57 +315,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
     }
     
-    //textfield delegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        
-        if let newGroupF = self.newGroupField  {
-            if (textField == newGroupF) {
-                let newGroup = ItemModel()
-                newGroup.content = newGroupF.text!
-                dbManager.insertGroup(newGroup)
-                
-                initObjects()
-                self.tableView.reloadData()
-                newGroupF.text = ""
-                newGroupF.resignFirstResponder()
-                return true
-            }
-        }
-        
-        if let newItemF = self.newItemField {
-            if (textField == newItemF) {
-                if (newItemF.text != "") {
-                    let newItem = ItemModel()
-                    newItem.content = newItemF.text!
-                    newItem.completed = false
-                    newItem.parentId = self.currentSelectedGroupId
-                    newItem.type = ItemEnum.L2
-                    dbManager.insertItem(newItem)
-                    self.insertItem(newItem)
-                    newItemF.text = ""
-                    newItemF.resignFirstResponder()
-                }
-            }
-        }
 
-        return true
-    }
     
     //helpers
     func initObjects() {
         
         objectTree.removeAll()
         
-        /*
         let dummyGroup = ItemModel()
         dummyGroup.type = ItemEnum.L1_Dummy
         objectTree.append(dummyGroup, [ItemModel]())
-        */
+        
         
         let groups = dbManager.selectAllGroups()
-        
-        print("init object \(groups.count)")
-        
         for group in groups {
             objectTree.append(group, [ItemModel]())
         }
