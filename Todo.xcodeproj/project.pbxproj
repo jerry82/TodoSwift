@@ -14,7 +14,6 @@
 		0F6DC5241BED47C200C47195 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F6DC5231BED47C200C47195 /* libsqlite3.0.tbd */; };
 		0F6DC54E1BED49FF00C47195 /* DBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC54D1BED49FF00C47195 /* DBManager.swift */; };
 		0F6DC5501BED4BE700C47195 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC54F1BED4BE700C47195 /* Utility.swift */; };
-		0F6DC5531BED4E2700C47195 /* GroupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC5511BED4E2700C47195 /* GroupModel.swift */; };
 		0F6DC5541BED4E2700C47195 /* ItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC5521BED4E2700C47195 /* ItemModel.swift */; };
 		0F6DC55F1BED4E3100C47195 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC5561BED4E3100C47195 /* FMDatabase.m */; };
 		0F6DC5601BED4E3100C47195 /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC5581BED4E3100C47195 /* FMDatabaseAdditions.m */; };
@@ -23,6 +22,7 @@
 		0F6DC5631BED4E3100C47195 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC55E1BED4E3100C47195 /* FMResultSet.m */; };
 		0F6DC5651BED4E3800C47195 /* tasklist.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 0F6DC5641BED4E3800C47195 /* tasklist.sqlite */; };
 		0F6DC56B1BEFA27800C47195 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F6DC5691BEFA27800C47195 /* Main.storyboard */; };
+		0FCC6C981BF0F35100587090 /* CellObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FCC6C971BF0F35100587090 /* CellObject.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +35,6 @@
 		0F6DC5231BED47C200C47195 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		0F6DC54D1BED49FF00C47195 /* DBManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DBManager.swift; sourceTree = "<group>"; };
 		0F6DC54F1BED4BE700C47195 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
-		0F6DC5511BED4E2700C47195 /* GroupModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupModel.swift; sourceTree = "<group>"; };
 		0F6DC5521BED4E2700C47195 /* ItemModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemModel.swift; sourceTree = "<group>"; };
 		0F6DC5551BED4E3100C47195 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
 		0F6DC5561BED4E3100C47195 /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabase.m; sourceTree = "<group>"; };
@@ -50,6 +49,7 @@
 		0F6DC5641BED4E3800C47195 /* tasklist.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = tasklist.sqlite; sourceTree = "<group>"; };
 		0F6DC5661BED4E5B00C47195 /* Todo-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Todo-Bridging-Header.h"; sourceTree = "<group>"; };
 		0F6DC56A1BEFA27800C47195 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0FCC6C971BF0F35100587090 /* CellObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellObject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +96,7 @@
 				0F08035D1BC1A4DB00B245ED /* Info.plist */,
 				0F6DC54D1BED49FF00C47195 /* DBManager.swift */,
 				0F6DC54F1BED4BE700C47195 /* Utility.swift */,
+				0FCC6C971BF0F35100587090 /* CellObject.swift */,
 			);
 			path = Todo;
 			sourceTree = "<group>";
@@ -103,7 +104,6 @@
 		0F6DC51A1BED433300C47195 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				0F6DC5511BED4E2700C47195 /* GroupModel.swift */,
 				0F6DC5521BED4E2700C47195 /* ItemModel.swift */,
 			);
 			name = Model;
@@ -209,7 +209,6 @@
 			files = (
 				0F6DC5541BED4E2700C47195 /* ItemModel.swift in Sources */,
 				0F0803541BC1A4DB00B245ED /* ViewController.swift in Sources */,
-				0F6DC5531BED4E2700C47195 /* GroupModel.swift in Sources */,
 				0F6DC55F1BED4E3100C47195 /* FMDatabase.m in Sources */,
 				0F6DC5611BED4E3100C47195 /* FMDatabasePool.m in Sources */,
 				0F6DC5621BED4E3100C47195 /* FMDatabaseQueue.m in Sources */,
@@ -217,6 +216,7 @@
 				0F6DC54E1BED49FF00C47195 /* DBManager.swift in Sources */,
 				0F6DC5631BED4E3100C47195 /* FMResultSet.m in Sources */,
 				0F0803521BC1A4DB00B245ED /* AppDelegate.swift in Sources */,
+				0FCC6C981BF0F35100587090 /* CellObject.swift in Sources */,
 				0F6DC5601BED4E3100C47195 /* FMDatabaseAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
