@@ -10,7 +10,6 @@
 		0F0803521BC1A4DB00B245ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F0803511BC1A4DB00B245ED /* AppDelegate.swift */; };
 		0F0803541BC1A4DB00B245ED /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F0803531BC1A4DB00B245ED /* ViewController.swift */; };
 		0F0803591BC1A4DB00B245ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F0803581BC1A4DB00B245ED /* Assets.xcassets */; };
-		0F08035C1BC1A4DB00B245ED /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F08035A1BC1A4DB00B245ED /* LaunchScreen.storyboard */; };
 		0F6DC5241BED47C200C47195 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F6DC5231BED47C200C47195 /* libsqlite3.0.tbd */; };
 		0F6DC54E1BED49FF00C47195 /* DBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC54D1BED49FF00C47195 /* DBManager.swift */; };
 		0F6DC5501BED4BE700C47195 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC54F1BED4BE700C47195 /* Utility.swift */; };
@@ -30,7 +29,6 @@
 		0F0803511BC1A4DB00B245ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0F0803531BC1A4DB00B245ED /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		0F0803581BC1A4DB00B245ED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0F08035B1BC1A4DB00B245ED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0F08035D1BC1A4DB00B245ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0F6DC5231BED47C200C47195 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		0F6DC54D1BED49FF00C47195 /* DBManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DBManager.swift; sourceTree = "<group>"; };
@@ -92,7 +90,6 @@
 				0F0803511BC1A4DB00B245ED /* AppDelegate.swift */,
 				0F0803531BC1A4DB00B245ED /* ViewController.swift */,
 				0F0803581BC1A4DB00B245ED /* Assets.xcassets */,
-				0F08035A1BC1A4DB00B245ED /* LaunchScreen.storyboard */,
 				0F08035D1BC1A4DB00B245ED /* Info.plist */,
 				0F6DC54D1BED49FF00C47195 /* DBManager.swift */,
 				0F6DC54F1BED4BE700C47195 /* Utility.swift */,
@@ -193,7 +190,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0F08035C1BC1A4DB00B245ED /* LaunchScreen.storyboard in Resources */,
 				0F0803591BC1A4DB00B245ED /* Assets.xcassets in Resources */,
 				0F6DC5651BED4E3800C47195 /* tasklist.sqlite in Resources */,
 				0F6DC56B1BEFA27800C47195 /* Main.storyboard in Resources */,
@@ -224,14 +220,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		0F08035A1BC1A4DB00B245ED /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0F08035B1BC1A4DB00B245ED /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
 		0F6DC5691BEFA27800C47195 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

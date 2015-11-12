@@ -21,6 +21,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     var activeTextField: UITextField!
     
     var currentSelectedGroupId: Int = -1
+    var keyboardShown = false
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +31,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardDidShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
+
         
         /*
         let add = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addButtonTap:")
@@ -47,26 +50,75 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     func keyboardWillShow(notification: NSNotification) {
+        /*
         if (self.newGroupField != nil) {
             if (self.activeTextField == self.newGroupField) {
+                print("add group selected")
                 return
             }
-        }
+        }*/
         
+        self.keyboardShown = true
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
-            var frame = tableView.frame
-            frame.size.height -= keyboardSize.height
-            self.tableView.frame = frame
+            
+            self.shortenTableViewHeight(keyboardSize.height)
             if (self.activeTextField != nil) {
                 let rect = self.tableView.convertRect(self.activeTextField.bounds, fromView: self.activeTextField)
                 self.tableView.scrollRectToVisible(rect, animated: true)
+                
             }
         }
         
     }
     
+    func keyboardWillHide(notification: NSNotification) {
+        /*
+        if (self.newGroupField != nil) {
+            if (self.activeTextField == self.newGroupField) {
+                print("add group selected")
+                return
+            }
+        }*/
+        
+        self.keyboardShown = false
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            self.resetTableViewHeight(keyboardSize.height)
+        }
+        
+    }
+    
+    func shortenTableViewHeight(keyboardHeight: CGFloat) {
+        if (self.keyboardShown) {
+            var frame = self.tableView.frame
+            frame.size.height -= keyboardHeight
+            self.tableView.frame = frame
+        }
+    }
+    
+    func resetTableViewHeight(keyboardHeight: CGFloat) {
+        if (!self.keyboardShown) {
+            var frame = self.tableView.frame
+            frame.size.height += keyboardHeight
+            self.tableView.frame = frame
+        }
+    }
+    
     func textFieldDidBeginEditing(textField: UITextField) {
         self.activeTextField = textField
+        
+        if (self.activeTextField == self.newGroupField) {
+            if (self.newItemField != nil) {
+                self.newItemField.resignFirstResponder()
+                self.newItemField.text = ""
+            }
+        }
+        else if (self.activeTextField == self.newItemField) {
+            if (self.newGroupField != nil) {
+                self.newGroupField.resignFirstResponder()
+                self.newGroupField.text = ""
+            }
+        }
+        print("begin editing")
     }
     
     //textfield delegate
@@ -74,13 +126,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         
         if let newGroupF = self.newGroupField  {
             if (textField == newGroupF) {
-                let newGroup = ItemModel()
-                newGroup.content = newGroupF.text!
-                dbManager.insertGroup(newGroup)
                 
-                initObjects()
-                self.tableView.reloadData()
-                newGroupF.text = ""
+                if (textField.text != "") {
+                    let newGroup = ItemModel()
+                    newGroup.content = newGroupF.text!
+                    dbManager.insertGroup(newGroup)
+                    initObjects()
+                    self.tableView.reloadData()
+                    newGroupF.text = ""
+                }
+
                 newGroupF.resignFirstResponder()
                 return true
             }
@@ -97,33 +152,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                     dbManager.insertItem(newItem)
                     self.insertItem(newItem)
                     newItemF.text = ""
-                    newItemF.resignFirstResponder()
                 }
+                newItemF.resignFirstResponder()
             }
         }
         
         return true
     }
-    
-    func keyboardWillHide(notification: NSNotification) {
-        
-        if (self.newGroupField != nil) {
-            if (self.activeTextField == self.newGroupField) {
-                return
-            }
-        }
-        
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
-            var frame = tableView.frame
-            frame.size.height += keyboardSize.height
-            self.tableView.frame = frame
-            UIView.commitAnimations()
-        }
-        
-    }
-    
+
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let flatArray = getFlatArray()
+        print("call numberOfRow!")
         return flatArray.count
     }
     
@@ -199,18 +238,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     
-    //row selected
-    /*
-    func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
-        
-        let cell: CellObject = self.tableView.cellForRowAtIndexPath(indexPath) as! CellObject
-        cell.contentView.backgroundColor = UIColor.whiteColor()
-        
-        return indexPath
-    }*/
-    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
+        if (self.activeTextField != nil) {
+            self.activeTextField.text = ""
+            self.activeTextField.resignFirstResponder()
+            //self.activeTextField = nil
+        }
+        
+        
+        /*
         if (self.newGroupField != nil) {
             self.newGroupField.text = ""
             self.newGroupField.resignFirstResponder()
@@ -218,7 +255,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         if (self.newItemField != nil) {
             self.newItemField.text = ""
             self.newItemField.resignFirstResponder()
-        }
+        }*/
         
         let selectedId = getSelectedGroupId(indexPath.row)
         
