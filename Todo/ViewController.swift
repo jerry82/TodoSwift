@@ -202,11 +202,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     //row selected
     /*
     func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
-        let selectedId = getSelectedGroupId(indexPath.row)
-        if (selectedId.0 != -1) {
-            collapseOtherCell(selectedId.0)
-        }
-        return nil
+        
+        let cell: CellObject = self.tableView.cellForRowAtIndexPath(indexPath) as! CellObject
+        cell.contentView.backgroundColor = UIColor.whiteColor()
+        
+        return indexPath
     }*/
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -240,19 +240,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
 
             let isExp: Bool = isExpanded(selectedId.0)
             let idx = getGroupTupleIdx(selectedId.0)
+            let cell: CellObject = self.tableView.cellForRowAtIndexPath(indexPath) as! CellObject
             
             //collapse
             if (isExp) {
-                let cell: CellObject = self.tableView.cellForRowAtIndexPath(indexPath) as! CellObject
+                
                 cell.changeToCollapseSign()
                 
                 objectTree[idx!].1.removeAll()
                 self.tableView.deleteRowsAtIndexPaths(indexArray, withRowAnimation: UITableViewRowAnimation.Automatic)
-                
-                
             }
             else {
-                let cell: CellObject = self.tableView.cellForRowAtIndexPath(indexPath) as! CellObject
                 cell.changeToExpandSign()
                 
                 objectTree[idx!].1 = items
@@ -266,6 +264,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 let indexPath = NSIndexPath(forRow: self.getFlatArray().count - 1, inSection: 0);
                 self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
             }
+            
+            
+            
         }
         //select item: complete the item
         else if (selectedId.1 != -1){

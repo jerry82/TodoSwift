@@ -14,10 +14,13 @@ class CellObject : UITableViewCell {
     @IBOutlet var sign: UILabel!
     @IBOutlet var newItem: UITextField!
     @IBOutlet var newSubItem: UITextField!
+    
+    let groupFont = UIFont(name: "HelveticaNeue-Bold", size: 19)!
+    let itemFont = UIFont(name: "HelveticaNeue", size: 17)
+    let itemBgColor = UIColor(netHex: 0xdbfffb)
+    let groupBgColor = UIColor.whiteColor()
 
     func initWithStyle(item: ItemModel) {
-        
-        self.contentLabel.textColor = UIColor.blackColor()
         
         switch (item.type) {
         case ItemEnum.L1:
@@ -27,9 +30,10 @@ class CellObject : UITableViewCell {
             self.contentLabel.hidden = false
             self.newItem.hidden = true
             self.newSubItem.hidden = true
+            self.selectionStyle = UITableViewCellSelectionStyle.None
+            
             self.decorateGroupLabel()
             
-            self.selectionStyle = UITableViewCellSelectionStyle.Default
         case ItemEnum.L2:
             self.sign.text = ""
             self.contentLabel.text = item.content
@@ -49,6 +53,8 @@ class CellObject : UITableViewCell {
             self.sign.hidden = true
             self.newItem.hidden = false
             self.newSubItem.hidden = true
+            self.backgroundColor = self.groupBgColor
+            self.newItem.placeholder = "> New Group"
             self.selectionStyle = UITableViewCellSelectionStyle.None
 
         default:
@@ -56,9 +62,14 @@ class CellObject : UITableViewCell {
             self.contentLabel.hidden = true
             self.sign.hidden = true
             self.newItem.hidden = true
-            self.newSubItem.placeholder = "Add Item Here"
+            self.newSubItem.placeholder = "> New Item"
             self.selectionStyle = UITableViewCellSelectionStyle.None
+            self.decorateItemLabel()
         }
+        
+        self.contentLabel.sizeToFit()
+        self.contentLabel.numberOfLines = 0;
+        self.contentLabel.lineBreakMode = NSLineBreakMode.ByWordWrapping
     }
     
     func changeToCollapseSign() {
@@ -80,19 +91,31 @@ class CellObject : UITableViewCell {
     func unStrikeText() {
         self.contentLabel.attributedText = NSMutableAttributedString.init(string: self.contentLabel.text!)
         self.contentLabel.textColor = UIColor.blackColor()
+
     }
     
     func decorateGroupLabel() {
-        //let currentFont = self.contentLabel.font
-        //let boldFont = currentFont.fontName + "-Bold"
-        //self.contentLabel.font = UIFont(name: boldFont, size: currentFont.pointSize + 2)
-        self.contentLabel.textColor = UIColor.blackColor()
+        self.contentLabel.font = self.groupFont
+        self.backgroundColor = self.groupBgColor
     }
     
     func decorateItemLabel() {
-        //let currentFont = self.contentLabel.font
-        //let boldFont = currentFont.fontName
-        //self.contentLabel.font = UIFont(name: boldFont, size: currentFont.pointSize)
+        self.contentLabel.font = self.itemFont
+        self.backgroundColor = self.itemBgColor
         self.contentLabel.textColor = UIColor.blackColor()
+    }
+}
+
+extension UIColor {
+    convenience init(red: Int, green: Int, blue: Int) {
+        assert(red >= 0 && red <= 255, "Invalid red component")
+        assert(green >= 0 && green <= 255, "Invalid green component")
+        assert(blue >= 0 && blue <= 255, "Invalid blue component")
+        
+        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
+    }
+    
+    convenience init(netHex:Int) {
+        self.init(red:(netHex >> 16) & 0xff, green:(netHex >> 8) & 0xff, blue:netHex & 0xff)
     }
 }
