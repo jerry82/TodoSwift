@@ -25,9 +25,15 @@ class CellObject : UITableViewCell {
         switch (item.type) {
         case ItemEnum.L1:
             self.sign.text = "+"
-            self.contentLabel.text = item.content
-            self.sign.hidden = false
+            
             self.contentLabel.hidden = false
+            self.contentLabel.text = item.content
+
+            self.textLabel?.hidden = true
+            self.textLabel!.text = ""
+            
+            self.sign.hidden = false
+            self.textLabel?.hidden = false
             self.newItem.hidden = true
             self.newSubItem.hidden = true
             self.selectionStyle = UITableViewCellSelectionStyle.None
@@ -36,9 +42,11 @@ class CellObject : UITableViewCell {
             
         case ItemEnum.L2:
             self.sign.text = ""
-            self.contentLabel.text = item.content
+            self.contentLabel.hidden = true
+            self.contentLabel.text = ""
+            self.textLabel?.text = item.content
             self.sign.hidden = false
-            self.contentLabel.hidden = false
+            self.textLabel?.hidden = false
             self.newItem.hidden = true
             self.newSubItem.hidden = true
             self.selectionStyle = UITableViewCellSelectionStyle.None
@@ -48,17 +56,26 @@ class CellObject : UITableViewCell {
                 self.strikeText()
             }
             
+            self.indentationWidth = 20
+            
         case ItemEnum.L1_Dummy:
+            self.textLabel?.hidden = true
             self.contentLabel.hidden = true
             self.sign.hidden = true
             self.newItem.hidden = false
             self.newSubItem.hidden = true
             self.backgroundColor = self.groupBgColor
             self.newItem.placeholder = "> New Group"
+            self.contentLabel.text = ""
+            self.textLabel?.text = ""
             self.selectionStyle = UITableViewCellSelectionStyle.None
+            
 
         default:
+            self.contentLabel.text = ""
+            self.textLabel?.text = ""
             self.newSubItem.hidden = false
+            self.textLabel?.hidden = true
             self.contentLabel.hidden = true
             self.sign.hidden = true
             self.newItem.hidden = true
@@ -67,9 +84,14 @@ class CellObject : UITableViewCell {
             self.decorateItemLabel()
         }
         
+        /*
         self.contentLabel.sizeToFit()
         self.contentLabel.numberOfLines = 0;
         self.contentLabel.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        */
+        self.textLabel?.sizeToFit()
+        self.textLabel?.numberOfLines = 0;
+        self.textLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping
     }
     
     func changeToCollapseSign() {
@@ -80,18 +102,21 @@ class CellObject : UITableViewCell {
         self.sign.text = "-"
     }
     
+    
     func strikeText() {
-        let attString = NSMutableAttributedString.init(string: self.contentLabel.text!)
+        
+        let attString = NSMutableAttributedString.init(string: (self.textLabel?.text!)!)
         attString.addAttribute(NSStrikethroughStyleAttributeName, value: 1, range: NSMakeRange(0, attString.length))
         
-        self.contentLabel.attributedText = attString
-        self.contentLabel.textColor = UIColor.grayColor()
+        self.textLabel?.attributedText = attString
+        self.textLabel?.textColor = UIColor.grayColor()
     }
     
     func unStrikeText() {
-        self.contentLabel.attributedText = NSMutableAttributedString.init(string: self.contentLabel.text!)
-        self.contentLabel.textColor = UIColor.blackColor()
-
+        
+        self.textLabel?.attributedText = NSMutableAttributedString.init(string: (self.textLabel?.text)!)
+        self.textLabel?.textColor = UIColor.blackColor()
+        
     }
     
     func decorateGroupLabel() {
@@ -100,9 +125,9 @@ class CellObject : UITableViewCell {
     }
     
     func decorateItemLabel() {
-        self.contentLabel.font = self.itemFont
+        self.textLabel?.font = self.itemFont
         self.backgroundColor = self.itemBgColor
-        self.contentLabel.textColor = UIColor.blackColor()
+        self.textLabel?.textColor = UIColor.blackColor()
     }
 }
 

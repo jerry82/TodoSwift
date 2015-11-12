@@ -31,8 +31,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardDidShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
-
-        
         /*
         let add = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addButtonTap:")
         self.navigationItem.rightBarButtonItem = add
@@ -50,14 +48,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     func keyboardWillShow(notification: NSNotification) {
-        /*
-        if (self.newGroupField != nil) {
-            if (self.activeTextField == self.newGroupField) {
-                print("add group selected")
-                return
-            }
-        }*/
-        
         self.keyboardShown = true
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
             
@@ -65,21 +55,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             if (self.activeTextField != nil) {
                 let rect = self.tableView.convertRect(self.activeTextField.bounds, fromView: self.activeTextField)
                 self.tableView.scrollRectToVisible(rect, animated: true)
-                
             }
         }
-        
     }
     
     func keyboardWillHide(notification: NSNotification) {
-        /*
-        if (self.newGroupField != nil) {
-            if (self.activeTextField == self.newGroupField) {
-                print("add group selected")
-                return
-            }
-        }*/
-        
         self.keyboardShown = false
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
             self.resetTableViewHeight(keyboardSize.height)
@@ -118,7 +98,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 self.newGroupField.text = ""
             }
         }
-        print("begin editing")
     }
     
     //textfield delegate
@@ -162,7 +141,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let flatArray = getFlatArray()
-        print("call numberOfRow!")
         return flatArray.count
     }
     
