@@ -21,6 +21,8 @@
 		0F6DC5631BED4E3100C47195 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F6DC55E1BED4E3100C47195 /* FMResultSet.m */; };
 		0F6DC5651BED4E3800C47195 /* tasklist.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 0F6DC5641BED4E3800C47195 /* tasklist.sqlite */; };
 		0F6DC56B1BEFA27800C47195 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F6DC5691BEFA27800C47195 /* Main.storyboard */; };
+		0F7112971BF63DE100AC7272 /* ExtendColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7112961BF63DE100AC7272 /* ExtendColor.swift */; };
+		0F7112991BF67C2500AC7272 /* JDataTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7112981BF67C2500AC7272 /* JDataTree.swift */; };
 		0FCC6C981BF0F35100587090 /* CellObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FCC6C971BF0F35100587090 /* CellObject.swift */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +49,8 @@
 		0F6DC5641BED4E3800C47195 /* tasklist.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = tasklist.sqlite; sourceTree = "<group>"; };
 		0F6DC5661BED4E5B00C47195 /* Todo-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Todo-Bridging-Header.h"; sourceTree = "<group>"; };
 		0F6DC56A1BEFA27800C47195 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0F7112961BF63DE100AC7272 /* ExtendColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtendColor.swift; sourceTree = "<group>"; };
+		0F7112981BF67C2500AC7272 /* JDataTree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JDataTree.swift; sourceTree = "<group>"; };
 		0FCC6C971BF0F35100587090 /* CellObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellObject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -159,6 +163,8 @@
 				0F6DC5361BED48F600C47195 /* SupportedFiles */,
 				0F6DC5661BED4E5B00C47195 /* Todo-Bridging-Header.h */,
 				0F6DC54F1BED4BE700C47195 /* Utility.swift */,
+				0F7112961BF63DE100AC7272 /* ExtendColor.swift */,
+				0F7112981BF67C2500AC7272 /* JDataTree.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -238,8 +244,10 @@
 				0F6DC5541BED4E2700C47195 /* ItemModel.swift in Sources */,
 				0F0803541BC1A4DB00B245ED /* ViewController.swift in Sources */,
 				0F6DC55F1BED4E3100C47195 /* FMDatabase.m in Sources */,
+				0F7112971BF63DE100AC7272 /* ExtendColor.swift in Sources */,
 				0F6DC5611BED4E3100C47195 /* FMDatabasePool.m in Sources */,
 				0F6DC5621BED4E3100C47195 /* FMDatabaseQueue.m in Sources */,
+				0F7112991BF67C2500AC7272 /* JDataTree.swift in Sources */,
 				0F6DC5501BED4BE700C47195 /* Utility.swift in Sources */,
 				0F6DC54E1BED49FF00C47195 /* DBManager.swift in Sources */,
 				0F6DC5631BED4E3100C47195 /* FMResultSet.m in Sources */,

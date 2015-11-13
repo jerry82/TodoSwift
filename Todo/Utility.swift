@@ -11,18 +11,13 @@ import UIKit
 
 class Utility {
     
+    // MARK: Singleton
     static let sharedInstance = Utility()
 
-    private let DATA_FILE = "tasklist.sqlite"
-    
-    //application const
-    static let TABLECELL_ROW_HEIGHT: CGFloat = 44
-    
-    
-
+    // MARK: Database Path Handlers
     func getDBPath() -> (String) {
         let documentsURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]
-        let fileURL = documentsURL.URLByAppendingPathComponent(DATA_FILE)
+        let fileURL = documentsURL.URLByAppendingPathComponent(AppConfig.DATA_FILE)
         return  fileURL.path!
     }
     
@@ -45,7 +40,7 @@ class Utility {
         let writePath = getDBPath()
         print("Write path: \(writePath)")
         if (!fileManager.fileExistsAtPath(writePath)) {
-            let defaultPath = NSBundle.mainBundle().resourceURL?.URLByAppendingPathComponent(Utility.sharedInstance.DATA_FILE).path
+            let defaultPath = NSBundle.mainBundle().resourceURL?.URLByAppendingPathComponent(AppConfig.DATA_FILE).path
             do {
                 try fileManager.copyItemAtPath(defaultPath!, toPath: writePath)
                 print("Success: copying database file")
@@ -56,3 +51,23 @@ class Utility {
         }
     }
 }
+
+// MARK: Settings
+struct CellConfig {
+    static let TABLECELL_ROW_HEIGHT: CGFloat = 44
+    static let SUBITEM_STRIKE_TEXTCOLOR: UIColor = UIColor.grayColor()
+    static let SUBITEM_UNSTRIKE_TEXTCOLOR: UIColor = UIColor.blackColor()
+    static let TABLECELL_GROUP_FONT = UIFont(name: "HelveticaNeue-Bold", size: 19)
+    static let TABLECELL_ITEM_FONT = UIFont(name: "HelveticaNeue", size: 16)
+    static let TABLECELL_ITEM_BGCOLOR = UIColor(netHex: 0xdbfffb)
+    static let TABLECELL_GROUP_BGCOLOR = UIColor.whiteColor()
+    static let GROUP_COLLAPSE_SIGN = "+"
+    static let GROUP_EXPAND_SIGN = "-"
+    static let TABLECELL_ITEM_INDENT_WIDTH: CGFloat = 15
+}
+
+struct AppConfig {
+    static let DATA_FILE = "tasklist.sqlite"
+    static let ITEM_CONTENT_LENGTH = 140 //allow 140 characters
+}
+    

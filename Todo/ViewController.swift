@@ -23,6 +23,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     var currentSelectedGroupId: Int = -1
     var frameChanged = false
     
+    //only allow the application to run portrait mode
+    var tableWithKeyboardFrameHeight: CGFloat = 0
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,23 +34,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardDidShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
-        self.tableView.rowHeight = Utility.TABLECELL_ROW_HEIGHT
-        /*
-        let add = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addButtonTap:")
-        self.navigationItem.rightBarButtonItem = add
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
-        self.tableView.addGestureRecognizer(tap)
-        */
+        self.tableView.rowHeight = CellConfig.TABLECELL_ROW_HEIGHT
         
         initObjects()
     }
     
-    //handle keyboard
-    func dismissKeyboard() {
-        self.newGroupField.resignFirstResponder()
-        print("outside tap")
-    }
-    
+    // MARK: Keyboard Handlers
     func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
             
@@ -69,9 +61,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     func shortenTableViewHeight(keyboardHeight: CGFloat) {
         if (!self.frameChanged) {
             var frame = self.tableView.frame
-            frame.size.height -= keyboardHeight
+            
+            //prevent the frame not shrink futher
+            if (frame.size.height > self.tableWithKeyboardFrameHeight) {
+                frame.size.height -= keyboardHeight
+            }
+            
             self.tableView.frame = frame
             self.frameChanged = true
+            
+            if (self.tableWithKeyboardFrameHeight == 0) {
+                self.tableWithKeyboardFrameHeight = frame.size.height
+            }
         }
     }
     
@@ -84,6 +85,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
     }
     
+    
+    // MARK: Textfields' Handlers
     func textFieldDidBeginEditing(textField: UITextField) {
         self.activeTextField = textField
         
@@ -101,7 +104,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
     }
     
-    //textfield delegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         
         if let newGroupF = self.newGroupField  {
@@ -148,6 +150,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
         
         return true
+    }
+    
+    
+    //set max character length of UITextField
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+        
+        let maxLength = AppConfig.ITEM_CONTENT_LENGTH
+        let currentString: NSString = textField.text!;
+        let newString: NSString = currentString.stringByReplacingCharactersInRange(range, withString: string)
+        
+        return newString.length <= maxLength
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -198,15 +211,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             let tupleId = self.getSelectedGroupId(indexPath.row)
             
             if (tupleId.0 != -1) { //group is selected
-                
                 self.dbManager.deleteGroup(tupleId.0)
-                print("delete groupid: \(tupleId.0)")
                 self.initObjects()
                 self.tableView.reloadData()
             }
             else if (tupleId.1 != -1) { //item is selected
-                print("delete itemid: \(tupleId.1)")
-                
                 self.dbManager.deleteItem(tupleId.1)
                 self.removeFromObjectTree(tupleId.1)
                 self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
@@ -259,13 +268,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             //collapse
             if (isExp) {
                 
-                cell.changeToCollapseSign()
+                cell.changeSign(true)
                 
                 objectTree[idx!].1.removeAll()
                 self.tableView.deleteRowsAtIndexPaths(indexArray, withRowAnimation: UITableViewRowAnimation.Automatic)
             }
             else {
-                cell.changeToExpandSign()
+                cell.changeSign(false)
                 
                 objectTree[idx!].1 = items
                 
@@ -328,7 +337,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         for i in 0..<flatArray.count {
             if (flatArray[i].id != currentSelectedGroupId && flatArray[i].type == ItemEnum.L1) {
                 let cell = self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: i, inSection: 0)) as? CellObject
-                cell?.changeToCollapseSign()
+                cell?.changeSign(true)
             }
         }
     }

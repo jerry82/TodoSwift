@@ -10,137 +10,112 @@ import Foundation
 import UIKit
 
 class CellObject : UITableViewCell {
+    
+    // Mark: Variables
     @IBOutlet var contentLabel: UILabel!
     @IBOutlet var sign: UILabel!
     @IBOutlet var newItem: UITextField!
     @IBOutlet var newSubItem: UITextField!
     
-    let groupFont = UIFont(name: "HelveticaNeue-Bold", size: 19)!
-    let itemFont = UIFont(name: "HelveticaNeue", size: 17)
-    let itemBgColor = UIColor(netHex: 0xdbfffb)
-    let groupBgColor = UIColor.whiteColor()
-
+    // MARK: Initialization
     func initWithStyle(item: ItemModel) {
         
         switch (item.type) {
         case ItemEnum.L1:
-            self.sign.text = "+"
-            
-            self.contentLabel.hidden = false
-            self.contentLabel.text = item.content
-
-            self.textLabel?.hidden = true
-            self.textLabel!.text = ""
-            
-            self.sign.hidden = false
-            self.textLabel?.hidden = false
-            self.newItem.hidden = true
-            self.newSubItem.hidden = true
-            self.selectionStyle = UITableViewCellSelectionStyle.None
-            
-            self.decorateGroupLabel()
+            self.displayGroup(false, content: item.content)
+            self.displayTextLabel(true, item: item)
+            self.displayTextFields(true, hiddenTextF2: true)
             
         case ItemEnum.L2:
-            self.sign.text = ""
-            self.contentLabel.hidden = true
-            self.contentLabel.text = ""
+            self.displayGroup(true, content: nil)
+            self.displayTextFields(true, hiddenTextF2: true)
+            self.displayTextLabel(false, item: item)
+
+        case ItemEnum.L1_Dummy:
+            self.displayGroup(true, content: nil)
+            self.displayTextLabel(true, item: item)
+            self.displayTextFields(false, hiddenTextF2: true)
+
+        default:
+            self.displayGroup(true, content: nil)
+            self.displayTextLabel(true, item: item)
+            self.displayTextFields(true, hiddenTextF2: false)
+            self.decorateItemLabel()
+        }
+
+        self.configMultipleLines()
+        self.selectionStyle = UITableViewCellSelectionStyle.None
+    }
+    
+    // MARK: show/hide components
+    func displayGroup(hidden: Bool, content: String!) {
+        self.contentLabel.hidden = hidden
+        self.sign.hidden = hidden
+        self.contentLabel.text = content
+        self.sign.text = hidden ? "" : CellConfig.GROUP_COLLAPSE_SIGN
+        
+        if (!hidden) {
+            self.contentLabel.font = CellConfig.TABLECELL_GROUP_FONT
+            self.backgroundColor = CellConfig.TABLECELL_GROUP_BGCOLOR
+        }
+    }
+    
+    func displayTextLabel(hidden: Bool, item: ItemModel) {
+        if (!hidden) {
             self.textLabel?.text = item.content
-            self.sign.hidden = false
             self.textLabel?.hidden = false
-            self.newItem.hidden = true
-            self.newSubItem.hidden = true
-            self.selectionStyle = UITableViewCellSelectionStyle.None
             self.decorateItemLabel()
             
             if (item.completed) {
                 self.strikeText()
             }
-            
-            self.indentationWidth = 15
-            
-        case ItemEnum.L1_Dummy:
+        }
+        else {
             self.textLabel?.hidden = true
-            self.contentLabel.hidden = true
-            self.sign.hidden = true
-            self.newItem.hidden = false
-            self.newSubItem.hidden = true
-            self.backgroundColor = self.groupBgColor
-            self.newItem.placeholder = "> New Group"
-            self.contentLabel.text = ""
-            self.textLabel?.text = ""
-            self.selectionStyle = UITableViewCellSelectionStyle.None
-            
-
-        default:
-            self.contentLabel.text = ""
-            self.textLabel?.text = ""
-            self.newSubItem.hidden = false
-            self.textLabel?.hidden = true
-            self.contentLabel.hidden = true
-            self.sign.hidden = true
-            self.newItem.hidden = true
-            self.newSubItem.placeholder = "> New Item"
-            self.selectionStyle = UITableViewCellSelectionStyle.None
-            self.decorateItemLabel()
+            self.textLabel!.text = ""
         }
         
-        /*
-        self.contentLabel.sizeToFit()
-        self.contentLabel.numberOfLines = 0;
-        self.contentLabel.lineBreakMode = NSLineBreakMode.ByWordWrapping
-        */
+    }
+    
+    func displayTextFields(hiddenTextF1: Bool, hiddenTextF2: Bool) {
+        self.newItem.hidden = hiddenTextF1
+        self.newSubItem.hidden = hiddenTextF2
+        self.newItem.placeholder = "> New Group"
+        self.newSubItem.placeholder = "> New Item"
+        if (!hiddenTextF1) {
+            self.backgroundColor = CellConfig.TABLECELL_GROUP_BGCOLOR
+        }
+    }
+    
+    func configMultipleLines() {
         self.textLabel?.sizeToFit()
         self.textLabel?.numberOfLines = 0;
         self.textLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping
     }
     
-    func changeToCollapseSign() {
-        self.sign.text = "+"
+    func changeSign(collapse: Bool) {
+        self.sign.text = collapse ? CellConfig.GROUP_COLLAPSE_SIGN : CellConfig.GROUP_EXPAND_SIGN
     }
     
-    func changeToExpandSign() {
-        self.sign.text = "-"
+    func decorateItemLabel() {
+        self.textLabel?.font = CellConfig.TABLECELL_ITEM_FONT
+        self.backgroundColor = CellConfig.TABLECELL_ITEM_BGCOLOR
+        self.textLabel?.textColor = CellConfig.SUBITEM_UNSTRIKE_TEXTCOLOR
+        self.indentationWidth = CellConfig.TABLECELL_ITEM_INDENT_WIDTH
     }
     
-    
+    // MARK: Strike Text
     func strikeText() {
-        
         let attString = NSMutableAttributedString.init(string: (self.textLabel?.text!)!)
         attString.addAttribute(NSStrikethroughStyleAttributeName, value: 1, range: NSMakeRange(0, attString.length))
         
         self.textLabel?.attributedText = attString
-        self.textLabel?.textColor = UIColor.grayColor()
+        self.textLabel?.textColor = CellConfig.SUBITEM_STRIKE_TEXTCOLOR
     }
     
     func unStrikeText() {
-        
         self.textLabel?.attributedText = NSMutableAttributedString.init(string: (self.textLabel?.text)!)
-        self.textLabel?.textColor = UIColor.blackColor()
-        
-    }
-    
-    func decorateGroupLabel() {
-        self.contentLabel.font = self.groupFont
-        self.backgroundColor = self.groupBgColor
-    }
-    
-    func decorateItemLabel() {
-        self.textLabel?.font = self.itemFont
-        self.backgroundColor = self.itemBgColor
-        self.textLabel?.textColor = UIColor.blackColor()
+        self.textLabel?.textColor = CellConfig.SUBITEM_UNSTRIKE_TEXTCOLOR
     }
 }
 
-extension UIColor {
-    convenience init(red: Int, green: Int, blue: Int) {
-        assert(red >= 0 && red <= 255, "Invalid red component")
-        assert(green >= 0 && green <= 255, "Invalid green component")
-        assert(blue >= 0 && blue <= 255, "Invalid blue component")
-        
-        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
-    }
-    
-    convenience init(netHex:Int) {
-        self.init(red:(netHex >> 16) & 0xff, green:(netHex >> 8) & 0xff, blue:netHex & 0xff)
-    }
-}

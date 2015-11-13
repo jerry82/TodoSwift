@@ -11,11 +11,13 @@ import Foundation
 
 class DBManager {
     
-    //singleton
+    // MARK: Singleton
     static let sharedIstance = DBManager()
     
+    // MARK: Variables
     private var database: AnyObject! = FMDatabase()
     
+    // MARK: Initialization
     init() {
         database = FMDatabase.databaseWithPath(Utility.sharedInstance.getDBPath())
     }
@@ -76,10 +78,6 @@ class DBManager {
         
         let _ : Bool = database.close()
         return -1
-    }
-    
-    func updateGroup(group: ItemModel) -> Bool {
-        return true
     }
     
     func deleteGroup(groupId: Int) {
