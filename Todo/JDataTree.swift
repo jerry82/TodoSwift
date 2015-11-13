@@ -12,16 +12,86 @@ class JDataTree {
     
     // MARK: Variables
     static var objectTree = [(ItemModel, [ItemModel])]()
+    static let dbManager = DBManager()
     
     static func initObjects() {
         objectTree.removeAll()
         addDummyGroup()
+        
+        let groups = dbManager.selectAllGroups()
+        for group in groups {
+            objectTree.append(group, [ItemModel]())
+        }
     }
     
     static func addDummyGroup() {
         let dummyGroup = ItemModel()
         dummyGroup.type = ItemEnum.L1_Dummy
         objectTree.append(dummyGroup, [ItemModel]())
+    }
+    
+    static func assignSubItems(idx: Int, items: [ItemModel]?) {
+        if (items == nil) {
+            objectTree[idx].1.removeAll()
+        }
+        else {
+            objectTree[idx].1 = items!
+        }
+    }
+    
+    static func removeSubItems(groupId: Int) -> (Int, Int) {
+        var idx = -1
+        var cnt = 0
+        for i in 0..<objectTree.count {
+            if (objectTree[i].0.id != groupId) {
+                if (objectTree[i].1.count > 0) {
+                    cnt = objectTree[i].1.count
+                    idx = getIdxInFlatArray(objectTree[i].0.id) + 1
+                    objectTree[i].1.removeAll()
+                }
+            }
+        }
+        
+        return (idx, cnt)
+    }
+    
+    static func insertGroup(item: ItemModel) -> Int {
+        objectTree.append(item, [ItemModel]())
+        let flatArray = self.getFlatArray()
+        return flatArray.count - 1
+    }
+    
+    static func insertItem(item: ItemModel, currentSelectedGroupId: Int) -> Int {
+        
+        //find the L2_dummy cell
+        var addIdx = -1
+        var flatArray = getFlatArray()
+        for i in 0..<flatArray.count {
+            if (flatArray[i].type == ItemEnum.L2_Dummy) {
+                addIdx = i
+                break;
+            }
+        }
+        
+        for i in 0..<objectTree.count {
+            if (objectTree[i].0.id == currentSelectedGroupId) {
+                let cnt = objectTree[i].1.count
+                objectTree[i].1.insert(item, atIndex: cnt - 1)
+            }
+        }
+        
+        return addIdx
+    }
+    
+    static func removeFromObjectTree(itemId: Int) {
+        for i in 0..<objectTree.count {
+            for idx in 0..<objectTree[i].1.count {
+                if (objectTree[i].1[idx].id == itemId) {
+                    objectTree[i].1.removeAtIndex(idx)
+                    break
+                }
+            }
+        }
     }
     
     static func getGroupTupleIdx(groupId: Int) -> Int? {

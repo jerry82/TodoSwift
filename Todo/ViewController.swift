@@ -13,11 +13,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     @IBOutlet var tableView: UITableView!
     
     let dbManager = DBManager()
-    var objectTree = [(ItemModel, [ItemModel])]()
     
     var newGroupField: UITextField!
     var newItemField: UITextField!
-    
     var activeTextField: UITextField!
     
     var currentSelectedGroupId: Int = -1
@@ -26,7 +24,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     //only allow the application to run portrait mode
     var tableWithKeyboardFrameHeight: CGFloat = 0
     
-    
+    // MARK: View Delegates
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -36,7 +34,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         
         self.tableView.rowHeight = CellConfig.TABLECELL_ROW_HEIGHT
         
-        initObjects()
+        JDataTree.initObjects()
     }
     
     // MARK: Keyboard Handlers
@@ -84,7 +82,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             self.frameChanged = false
         }
     }
-    
     
     // MARK: Textfields' Handlers
     func textFieldDidBeginEditing(textField: UITextField) {
@@ -152,9 +149,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         return true
     }
     
-    
-    //set max character length of UITextField
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool { //set max character length of UITextField
         
         let maxLength = AppConfig.ITEM_CONTENT_LENGTH
         let currentString: NSString = textField.text!;
@@ -164,15 +159,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let flatArray = getFlatArray()
-        return flatArray.count
+        return JDataTree.getFlatArray().count
     }
     
-    //define how the cell looks
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell: CellObject = tableView.dequeueReusableCellWithIdentifier("Cell") as! CellObject
-        let flatArray = getFlatArray()
+        let flatArray = JDataTree.getFlatArray()
         let item = flatArray[indexPath.row]
         
         cell.initWithStyle(item)
@@ -208,16 +201,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         let delete = UITableViewRowAction(style: UITableViewRowActionStyle.Destructive, title: "Delete", handler: {
             (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
             
-            let tupleId = self.getSelectedGroupId(indexPath.row)
+            let tupleId = JDataTree.getSelectedGroupId(indexPath.row)
             
             if (tupleId.0 != -1) { //group is selected
                 self.dbManager.deleteGroup(tupleId.0)
-                self.initObjects()
+                JDataTree.initObjects()
                 self.tableView.reloadData()
             }
             else if (tupleId.1 != -1) { //item is selected
                 self.dbManager.deleteItem(tupleId.1)
-                self.removeFromObjectTree(tupleId.1)
+                JDataTree.removeFromObjectTree(tupleId.1)
                 self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
             }
             
@@ -235,7 +228,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         // Dispose of any resources that can be recreated.
     }
     
-    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         if (self.activeTextField != nil) {
@@ -243,7 +235,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             self.activeTextField.resignFirstResponder()
         }
         
-        let selectedId = getSelectedGroupId(indexPath.row)
+        let selectedId = JDataTree.getSelectedGroupId(indexPath.row)
         
         if (selectedId.0 != -1) {
             
@@ -261,8 +253,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 indexArray.append(path)
             }
 
-            let isExp: Bool = isExpanded(selectedId.0)
-            let idx = getGroupTupleIdx(selectedId.0)
+            let isExp: Bool = JDataTree.isExpanded(selectedId.0)
+            let idx = JDataTree.getGroupTupleIdx(selectedId.0)
             let cell: CellObject = self.tableView.cellForRowAtIndexPath(indexPath) as! CellObject
             
             //collapse
@@ -270,13 +262,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 
                 cell.changeSign(true)
                 
-                objectTree[idx!].1.removeAll()
+                //objectTree[idx!].1.removeAll()
+                JDataTree.assignSubItems(idx!, items: nil)
+                
                 self.tableView.deleteRowsAtIndexPaths(indexArray, withRowAnimation: UITableViewRowAnimation.Automatic)
             }
             else {
                 cell.changeSign(false)
                 
-                objectTree[idx!].1 = items
+                JDataTree.assignSubItems(idx!, items: items)
                 
                 currentSelectedGroupId = selectedId.0 //used to insert item
                 
@@ -292,7 +286,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         //select item: complete the item
         else if (selectedId.1 != -1){
             let cell: CellObject = self.tableView.cellForRowAtIndexPath(indexPath) as! CellObject
-            let item = self.getFlatArray()[indexPath.row]
+            let item = JDataTree.getFlatArray()[indexPath.row]
             item.completed = !item.completed
             dbManager.updateItemStatus(item)
             if (item.completed) {
@@ -304,24 +298,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
     }
     
-    func scrollToLastItem() {
-        let indexPath = NSIndexPath(forRow: self.getFlatArray().count - 1, inSection: 0);
-        self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
-    }
-    
     func collapseOtherCell(currentSelectedGroupId: Int) {
         
-        var idx = -1
-        var cnt = 0
-        for i in 0..<objectTree.count {
-            if (objectTree[i].0.id != currentSelectedGroupId) {
-                if (objectTree[i].1.count > 0) {
-                    cnt = objectTree[i].1.count
-                    idx = getIdxInFlatArray(objectTree[i].0.id) + 1
-                    objectTree[i].1.removeAll()
-                }
-            }
-        }
+        let tuple = JDataTree.removeSubItems(currentSelectedGroupId)
+        var idx = tuple.0
+        let cnt = tuple.1
         
         if (idx != -1) {
             var indexArray = [NSIndexPath]()
@@ -333,7 +314,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
         
         //change sign to other groups
-        var flatArray = self.getFlatArray()
+        var flatArray = JDataTree.getFlatArray()
         for i in 0..<flatArray.count {
             if (flatArray[i].id != currentSelectedGroupId && flatArray[i].type == ItemEnum.L1) {
                 let cell = self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: i, inSection: 0)) as? CellObject
@@ -342,131 +323,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
     }
     
-
-    
-    //helpers
-    func initObjects() {
-        
-        objectTree.removeAll()
-        
-        let dummyGroup = ItemModel()
-        dummyGroup.type = ItemEnum.L1_Dummy
-        objectTree.append(dummyGroup, [ItemModel]())
-        
-        
-        let groups = dbManager.selectAllGroups()
-        for group in groups {
-            objectTree.append(group, [ItemModel]())
-        }
+    // MARK: Helpers
+    func scrollToLastItem() {
+        let indexPath = NSIndexPath(forRow: JDataTree.getFlatArray().count - 1, inSection: 0);
+        self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
     }
     
     func insertGroup(item: ItemModel) {
-        objectTree.append(item, [ItemModel]())
-        let flatArray = self.getFlatArray()
-        self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: flatArray.count - 1, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
+        let groupPos = JDataTree.insertGroup(item)
+        self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: groupPos, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
     }
     
     func insertItem(item: ItemModel) {
-        
-        //find the L2_dummy cell
-        var addIdx = -1
-        var flatArray = self.getFlatArray()
-        for i in 0..<flatArray.count {
-            if (flatArray[i].type == ItemEnum.L2_Dummy) {
-                addIdx = i
-                break;
-            }
-        }
-        
-        for i in 0..<objectTree.count {
-            if (objectTree[i].0.id == self.currentSelectedGroupId) {
-                let cnt = objectTree[i].1.count
-                objectTree[i].1.insert(item, atIndex: cnt - 1)
-            }
-        }
-        
+        let addIdx = JDataTree.insertItem(item, currentSelectedGroupId: self.currentSelectedGroupId)
         self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: addIdx, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
-    }
-    
-    
-    func removeFromObjectTree(itemId: Int) {
-        for i in 0..<objectTree.count {
-            for idx in 0..<objectTree[i].1.count {
-                if (objectTree[i].1[idx].id == itemId) {
-                    objectTree[i].1.removeAtIndex(idx)
-                    break
-                }
-            }
-        }
-    }
-    
-    
-    func getGroupTupleIdx(groupId: Int) -> Int? {
-        for i in 0..<objectTree.count {
-            if (objectTree[i].0.id == groupId) {
-                return i
-            }
-        }
-        return nil
-    }
-    
-    func isExpanded(groupId: Int) -> Bool {
-        
-        for val in objectTree {
-            if (groupId == val.0.id) {
-                return val.1.count > 0
-            }
-        }
-        return false
-    }
-    
-    //return (groupId, itemId)
-    func getSelectedGroupId(indexPathRow: Int) -> (Int, Int) {
-        
-        let flatArray = getFlatArray()
-        let item = flatArray[indexPathRow]
-        if (item.type == ItemEnum.L1) {
-            return (item.id, -1)
-        }
-        else if (item.type == ItemEnum.L2) {
-            return (-1, item.id)
-        }
-        
-        return (-1, -1)
-    }
-    
-    func getIdxInFlatArray(selectedId: Int) -> Int {
-        var flatArray = self.getFlatArray()
-        
-        for i in 0..<flatArray.count {
-            if (flatArray[i].id == selectedId) {
-                return i
-            }
-        }
-        return -1
-    }
-    
-    func getFlatArray() -> [ItemModel] { //parse the objects to flat array
-        var flatArray = [ItemModel]()
-        for val in objectTree {
-            flatArray.append(val.0)
-            
-            for item in val.1 {
-                flatArray.append(item)
-            }
-        }
-        return flatArray
-    }
-    
-    func getIdxDummySubItemField() -> Int {
-        let flatArray = self.getFlatArray()
-        
-        for i in 0..<flatArray.count {
-            if (flatArray[i].type == ItemEnum.L2_Dummy) {
-                return i
-            }
-        }
-        return -1
     }
 }
 
