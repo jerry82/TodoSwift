@@ -7,12 +7,18 @@
 //
 
 import Foundation
+import UIKit
 
 class Utility {
     
     static let sharedInstance = Utility()
 
     private let DATA_FILE = "tasklist.sqlite"
+    
+    //application const
+    static let TABLECELL_ROW_HEIGHT: CGFloat = 44
+    
+    
 
     func getDBPath() -> (String) {
         let documentsURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]

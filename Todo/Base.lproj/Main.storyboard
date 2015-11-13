@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Quick Note-->
@@ -17,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Nwh-x7-G9I">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Nwh-x7-G9I">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -36,27 +37,35 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WaZ-xB-L0d">
-                                                    <rect key="frame" x="38" y="11" width="329" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WaZ-xB-L0d">
+                                                    <rect key="frame" x="25" y="11" width="567" height="21"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="center" fixedFrame="YES" contentHorizontalAlignment="fill" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="KTD-6x-J5A">
+                                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="center" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="fill" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="KTD-6x-J5A">
                                                     <rect key="frame" x="8" y="5" width="354" height="30"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Wrx-eM-ibo">
-                                                    <rect key="frame" x="40" y="5" width="265" height="30"/>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Wrx-eM-ibo">
+                                                    <rect key="frame" x="30" y="5" width="545" height="30"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
                                             </subviews>
                                             <animations/>
+                                            <constraints>
+                                                <constraint firstItem="Wrx-eM-ibo" firstAttribute="leading" secondItem="V8V-K8-iOg" secondAttribute="leadingMargin" constant="24" id="9gA-kv-B5D"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="KTD-6x-J5A" secondAttribute="trailing" constant="20" id="Ptm-td-aJD"/>
+                                                <constraint firstItem="KTD-6x-J5A" firstAttribute="leading" secondItem="V8V-K8-iOg" secondAttribute="leadingMargin" id="Z5J-cN-1gO"/>
+                                                <constraint firstItem="WaZ-xB-L0d" firstAttribute="trailing" secondItem="V8V-K8-iOg" secondAttribute="trailingMargin" constant="5" id="dda-fv-SaF"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Wrx-eM-ibo" secondAttribute="trailing" constant="2" id="hUN-qO-aWL"/>
+                                                <constraint firstItem="WaZ-xB-L0d" firstAttribute="leading" secondItem="V8V-K8-iOg" secondAttribute="leadingMargin" constant="20" id="iMo-8f-FT7"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                         <animations/>
                                         <connections>

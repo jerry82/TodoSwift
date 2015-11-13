@@ -46,18 +46,36 @@ class DBManager {
         return groups
     }
     
-    func insertGroup(group: ItemModel) {
+    func insertGroup(group: ItemModel) -> Int{
      
         if (!database.open()) {
             print("Error: failed to open DB")
-            return
+            return -1
         }
         
         let sql = "INSERT INTO item_table(content, parentId, completed) VALUES (?, -1, 'false')"
         let args : [AnyObject] = [group.content]
         database.executeUpdate(sql, withArgumentsInArray: args)
+        let id = Int(database.lastInsertRowId())
+        let _ : Bool = database.close()
+        return id
+    }
+    
+    func getLastItemIdx() -> Int {
+        if (!database.open()) {
+            print("Error: failed to open DB")
+            return -1
+        }
+        
+        let sql = "SELECT LAST_INSERT_ROWID()"
+        let args = [AnyObject]()
+        let rs = database.executeQuery(sql, withArgumentsInArray: args)
+        while (rs.next()) {
+            return Int(rs.intForColumnIndex(0))
+        }
         
         let _ : Bool = database.close()
+        return -1
     }
     
     func updateGroup(group: ItemModel) -> Bool {

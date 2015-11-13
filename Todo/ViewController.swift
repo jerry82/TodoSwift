@@ -21,7 +21,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     var activeTextField: UITextField!
     
     var currentSelectedGroupId: Int = -1
-    var keyboardShown = false
+    var frameChanged = false
     
     
     override func viewDidLoad() {
@@ -31,6 +31,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardDidShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
+        self.tableView.rowHeight = Utility.TABLECELL_ROW_HEIGHT
         /*
         let add = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addButtonTap:")
         self.navigationItem.rightBarButtonItem = add
@@ -48,7 +49,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     func keyboardWillShow(notification: NSNotification) {
-        self.keyboardShown = true
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
             
             self.shortenTableViewHeight(keyboardSize.height)
@@ -60,7 +60,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     func keyboardWillHide(notification: NSNotification) {
-        self.keyboardShown = false
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
             self.resetTableViewHeight(keyboardSize.height)
         }
@@ -68,18 +67,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     func shortenTableViewHeight(keyboardHeight: CGFloat) {
-        if (self.keyboardShown) {
+        if (!self.frameChanged) {
             var frame = self.tableView.frame
             frame.size.height -= keyboardHeight
             self.tableView.frame = frame
+            self.frameChanged = true
         }
     }
     
     func resetTableViewHeight(keyboardHeight: CGFloat) {
-        if (!self.keyboardShown) {
+        if (self.frameChanged) {
             var frame = self.tableView.frame
             frame.size.height += keyboardHeight
             self.tableView.frame = frame
+            self.frameChanged = false
         }
     }
     
@@ -109,13 +110,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 if (textField.text != "") {
                     let newGroup = ItemModel()
                     newGroup.content = newGroupF.text!
-                    dbManager.insertGroup(newGroup)
-                    initObjects()
-                    self.tableView.reloadData()
-                    newGroupF.text = ""
+                    newGroup.type = ItemEnum.L1
+                    newGroup.id = dbManager.insertGroup(newGroup)
+                    print(newGroup.id)
+                    
+                    if (newGroup.id != -1) {
+                        self.insertGroup(newGroup)
+                        newGroupF.text = ""
+                    }
+                    //TODO: handle error
+                    else {
+                        print("Error: insert group")
+                    }
                 }
 
                 newGroupF.resignFirstResponder()
+                self.scrollToLastItem()
                 return true
             }
         }
@@ -133,6 +143,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                     newItemF.text = ""
                 }
                 newItemF.resignFirstResponder()
+                self.scrollToLastItem()
             }
         }
         
@@ -221,19 +232,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         if (self.activeTextField != nil) {
             self.activeTextField.text = ""
             self.activeTextField.resignFirstResponder()
-            //self.activeTextField = nil
         }
-        
-        
-        /*
-        if (self.newGroupField != nil) {
-            self.newGroupField.text = ""
-            self.newGroupField.resignFirstResponder()
-        }
-        if (self.newItemField != nil) {
-            self.newItemField.text = ""
-            self.newItemField.resignFirstResponder()
-        }*/
         
         let selectedId = getSelectedGroupId(indexPath.row)
         
@@ -276,11 +275,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
 
                 collapseOtherCell(selectedId.0)
                 
-                let indexPath = NSIndexPath(forRow: self.getFlatArray().count - 1, inSection: 0);
-                self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
+                self.scrollToLastItem()
+                
             }
-            
-            
             
         }
         //select item: complete the item
@@ -296,6 +293,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 cell.unStrikeText()
             }
         }
+    }
+    
+    func scrollToLastItem() {
+        let indexPath = NSIndexPath(forRow: self.getFlatArray().count - 1, inSection: 0);
+        self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
     }
     
     func collapseOtherCell(currentSelectedGroupId: Int) {
@@ -349,6 +351,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
     }
     
+    func insertGroup(item: ItemModel) {
+        objectTree.append(item, [ItemModel]())
+        let flatArray = self.getFlatArray()
+        self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: flatArray.count - 1, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
+    }
+    
     func insertItem(item: ItemModel) {
         
         //find the L2_dummy cell
@@ -360,8 +368,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 break;
             }
         }
-        print("dummy at: \(addIdx)")
-
         
         for i in 0..<objectTree.count {
             if (objectTree[i].0.id == self.currentSelectedGroupId) {
@@ -371,7 +377,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
         
         self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: addIdx, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
-
     }
     
     

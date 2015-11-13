@@ -82,28 +82,24 @@
 		0F0803501BC1A4DB00B245ED /* Todo */ = {
 			isa = PBXGroup;
 			children = (
-				0F6DC5691BEFA27800C47195 /* Main.storyboard */,
-				0F6DC5661BED4E5B00C47195 /* Todo-Bridging-Header.h */,
-				0F6DC5361BED48F600C47195 /* SupportedFiles */,
-				0F6DC5251BED481F00C47195 /* FMDB */,
-				0F6DC51A1BED433300C47195 /* Model */,
+				0F7112951BF636A200AC7272 /* Helpers */,
+				0F7112941BF6368100AC7272 /* Stores */,
+				0F7112931BF6366000AC7272 /* Controllers */,
+				0F7112921BF6363500AC7272 /* Views */,
+				0F6DC51A1BED433300C47195 /* Models */,
 				0F0803511BC1A4DB00B245ED /* AppDelegate.swift */,
-				0F0803531BC1A4DB00B245ED /* ViewController.swift */,
 				0F0803581BC1A4DB00B245ED /* Assets.xcassets */,
 				0F08035D1BC1A4DB00B245ED /* Info.plist */,
-				0F6DC54D1BED49FF00C47195 /* DBManager.swift */,
-				0F6DC54F1BED4BE700C47195 /* Utility.swift */,
-				0FCC6C971BF0F35100587090 /* CellObject.swift */,
 			);
 			path = Todo;
 			sourceTree = "<group>";
 		};
-		0F6DC51A1BED433300C47195 /* Model */ = {
+		0F6DC51A1BED433300C47195 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				0F6DC5521BED4E2700C47195 /* ItemModel.swift */,
 			);
-			name = Model;
+			name = Models;
 			sourceTree = "<group>";
 		};
 		0F6DC5251BED481F00C47195 /* FMDB */ = {
@@ -129,6 +125,42 @@
 				0F6DC5641BED4E3800C47195 /* tasklist.sqlite */,
 			);
 			name = SupportedFiles;
+			sourceTree = "<group>";
+		};
+		0F7112921BF6363500AC7272 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0F6DC5691BEFA27800C47195 /* Main.storyboard */,
+				0FCC6C971BF0F35100587090 /* CellObject.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		0F7112931BF6366000AC7272 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				0F0803531BC1A4DB00B245ED /* ViewController.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		0F7112941BF6368100AC7272 /* Stores */ = {
+			isa = PBXGroup;
+			children = (
+				0F6DC54D1BED49FF00C47195 /* DBManager.swift */,
+			);
+			name = Stores;
+			sourceTree = "<group>";
+		};
+		0F7112951BF636A200AC7272 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				0F6DC5251BED481F00C47195 /* FMDB */,
+				0F6DC5361BED48F600C47195 /* SupportedFiles */,
+				0F6DC5661BED4E5B00C47195 /* Todo-Bridging-Header.h */,
+				0F6DC54F1BED4BE700C47195 /* Utility.swift */,
+			);
+			name = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

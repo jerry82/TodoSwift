@@ -56,7 +56,7 @@ class CellObject : UITableViewCell {
                 self.strikeText()
             }
             
-            self.indentationWidth = 20
+            self.indentationWidth = 15
             
         case ItemEnum.L1_Dummy:
             self.textLabel?.hidden = true
