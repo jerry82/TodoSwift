@@ -48,21 +48,6 @@ class DBManager {
         return groups
     }
     
-    func insertGroup(group: ItemModel) -> Int{
-     
-        if (!database.open()) {
-            print("Error: failed to open DB")
-            return -1
-        }
-        
-        let sql = "INSERT INTO item_table(content, parentId, completed) VALUES (?, -1, 'false')"
-        let args : [AnyObject] = [group.content]
-        database.executeUpdate(sql, withArgumentsInArray: args)
-        let id = Int(database.lastInsertRowId())
-        let _ : Bool = database.close()
-        return id
-    }
-    
     func getLastItemIdx() -> Int {
         if (!database.open()) {
             print("Error: failed to open DB")
@@ -137,17 +122,19 @@ class DBManager {
         let _ : Bool = database.close()
     }
     
-    func insertItem(item: ItemModel) {
+    func insertItem(item: ItemModel) -> Int {
         if (!database.open()) {
             print("Error: failed to open DB")
-            return
+            return -1
         }
         
-        let sql = "INSERT INTO item_table(content, completed, parentId) VALUES (?, ?, ?)"
-        let args : [AnyObject] = [item.content, item.completed, item.parentId]
+        let sql = "INSERT INTO item_table(content, completed, parentId) VALUES (?, 'false', ?)"
+        let args : [AnyObject] = [item.content, item.parentId]
         database.executeUpdate(sql, withArgumentsInArray: args)
-        
+        let id = Int(database.lastInsertRowId())
         let _ : Bool = database.close()
+        
+        return id
     }
 
     func deleteItem(itemId: Int) {

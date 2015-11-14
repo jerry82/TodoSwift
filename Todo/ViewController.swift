@@ -110,8 +110,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                     let newGroup = ItemModel()
                     newGroup.content = newGroupF.text!
                     newGroup.type = ItemEnum.L1
-                    newGroup.id = dbManager.insertGroup(newGroup)
-                    print(newGroup.id)
+                    newGroup.parentId = -1
+                    newGroup.id = dbManager.insertItem(newGroup)
                     
                     if (newGroup.id != -1) {
                         self.insertGroup(newGroup)
@@ -137,7 +137,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                     newItem.completed = false
                     newItem.parentId = self.currentSelectedGroupId
                     newItem.type = ItemEnum.L2
-                    dbManager.insertItem(newItem)
+                    newItem.id = dbManager.insertItem(newItem)
                     self.insertItem(newItem)
                     newItemF.text = ""
                 }
