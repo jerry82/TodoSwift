@@ -27,7 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0F08034E1BC1A4DB00B245ED /* Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F08034E1BC1A4DB00B245ED /* QuickNote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuickNote.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F0803511BC1A4DB00B245ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0F0803531BC1A4DB00B245ED /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		0F0803581BC1A4DB00B245ED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -78,7 +78,7 @@
 		0F08034F1BC1A4DB00B245ED /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0F08034E1BC1A4DB00B245ED /* Todo.app */,
+				0F08034E1BC1A4DB00B245ED /* QuickNote.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -172,9 +172,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0F08034D1BC1A4DB00B245ED /* Todo */ = {
+		0F08034D1BC1A4DB00B245ED /* QuickNote */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0F0803601BC1A4DB00B245ED /* Build configuration list for PBXNativeTarget "Todo" */;
+			buildConfigurationList = 0F0803601BC1A4DB00B245ED /* Build configuration list for PBXNativeTarget "QuickNote" */;
 			buildPhases = (
 				0F08034A1BC1A4DB00B245ED /* Sources */,
 				0F08034B1BC1A4DB00B245ED /* Frameworks */,
@@ -184,9 +184,9 @@
 			);
 			dependencies = (
 			);
-			name = Todo;
+			name = QuickNote;
 			productName = Todo;
-			productReference = 0F08034E1BC1A4DB00B245ED /* Todo.app */;
+			productReference = 0F08034E1BC1A4DB00B245ED /* QuickNote.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -205,7 +205,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0F0803491BC1A4DB00B245ED /* Build configuration list for PBXProject "Todo" */;
+			buildConfigurationList = 0F0803491BC1A4DB00B245ED /* Build configuration list for PBXProject "QuickNote" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -218,7 +218,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0F08034D1BC1A4DB00B245ED /* Todo */,
+				0F08034D1BC1A4DB00B245ED /* QuickNote */,
 			);
 		};
 /* End PBXProject section */
@@ -364,8 +364,8 @@
 				INFOPLIST_FILE = Todo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = jstudio.Todo;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = jstudio.QuickNote;
+				PRODUCT_NAME = QuickNote;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "/Users/darkmouse/Documents/Code/iOS/Todo/Todo/Todo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -383,8 +383,8 @@
 				INFOPLIST_FILE = Todo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = jstudio.Todo;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = jstudio.QuickNote;
+				PRODUCT_NAME = QuickNote;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "/Users/darkmouse/Documents/Code/iOS/Todo/Todo/Todo-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -394,7 +394,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0F0803491BC1A4DB00B245ED /* Build configuration list for PBXProject "Todo" */ = {
+		0F0803491BC1A4DB00B245ED /* Build configuration list for PBXProject "QuickNote" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0F08035E1BC1A4DB00B245ED /* Debug */,
@@ -403,7 +403,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0F0803601BC1A4DB00B245ED /* Build configuration list for PBXNativeTarget "Todo" */ = {
+		0F0803601BC1A4DB00B245ED /* Build configuration list for PBXNativeTarget "QuickNote" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0F0803611BC1A4DB00B245ED /* Debug */,

@@ -22,7 +22,7 @@ class DBManager {
         database = FMDatabase.databaseWithPath(Utility.sharedInstance.getDBPath())
     }
     
-    //group CRUD
+    // MARK: CRUD Operations
     func selectAllGroups() -> [ItemModel] {
         var groups = [ItemModel]()
      
