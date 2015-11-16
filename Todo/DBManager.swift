@@ -128,7 +128,7 @@ class DBManager {
             return -1
         }
         
-        let sql = "INSERT INTO item_table(content, completed, parentId) VALUES (?, 'false', ?)"
+        let sql = "INSERT INTO item_table(content, completed, parentId) VALUES (?, 0, ?)"
         let args : [AnyObject] = [item.content, item.parentId]
         database.executeUpdate(sql, withArgumentsInArray: args)
         let id = Int(database.lastInsertRowId())
@@ -137,6 +137,19 @@ class DBManager {
         return id
     }
 
+    func deleteCompletedItem(groupId: Int) {
+        if (!database.open()) {
+            print("Error: failed to open DB")
+            return
+        }
+        
+        let sql = "DELETE FROM item_table WHERE parentId = ? and completed = 1"
+        let args: [AnyObject] = [groupId]
+        database.executeUpdate(sql, withArgumentsInArray: args)
+        
+        let _ : Bool = database.close()
+    }
+    
     func deleteItem(itemId: Int) {
         if (!database.open()) {
             print("Error: failed to open DB")

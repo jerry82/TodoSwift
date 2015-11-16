@@ -198,10 +198,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     //delete cells
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
-        let delete = UITableViewRowAction(style: UITableViewRowActionStyle.Destructive, title: "Delete", handler: {
+        var actions = [UITableViewRowAction]()
+        let tupleId = JDataTree.getSelectedGroupId(indexPath.row)
+        
+        let deleteAction = UITableViewRowAction(style: UITableViewRowActionStyle.Destructive, title: "Delete", handler: {
             (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
-            
-            let tupleId = JDataTree.getSelectedGroupId(indexPath.row)
             
             if (tupleId.0 != -1) { //group is selected
                 self.dbManager.deleteGroup(tupleId.0)
@@ -213,10 +214,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 JDataTree.removeFromObjectTree(tupleId.1)
                 self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
             }
-            
         })
         
-        return [delete]
+        actions.append(deleteAction)
+        
+        if (tupleId.0 != -1) { //if row is Group:
+            let cleanAction = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "Clean", handler: {
+                (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
+                
+                self.dbManager.deleteCompletedItem(tupleId.0)
+                let idxArray = JDataTree.cleanCompletedItems(tupleId.0)
+                
+                var indexPaths = [NSIndexPath]()
+                for i in idxArray {
+                    indexPaths.append(NSIndexPath(forRow: i, inSection: 0))
+                }
+                self.tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: UITableViewRowAnimation.Automatic)
+                
+                self.tableView.setEditing(false, animated: true)
+            })
+            actions.append(cleanAction)
+        }
+        
+        return actions
     }
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
@@ -262,7 +282,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 
                 cell.changeSign(true)
                 
-                //objectTree[idx!].1.removeAll()
                 JDataTree.assignSubItems(idx!, items: nil)
                 
                 self.tableView.deleteRowsAtIndexPaths(indexArray, withRowAnimation: UITableViewRowAnimation.Automatic)

@@ -30,6 +30,7 @@ class JDataTree {
         objectTree.append(dummyGroup, [ItemModel]())
     }
     
+    //assign list of items to the idx
     static func assignSubItems(idx: Int, items: [ItemModel]?) {
         if (items == nil) {
             objectTree[idx].1.removeAll()
@@ -83,6 +84,44 @@ class JDataTree {
         return addIdx
     }
     
+    //clean completed item within group
+    static func cleanCompletedItems(groupId: Int) -> [Int]{
+        var indexArray = [Int]()
+        
+        let flatArray = self.getFlatArray()
+        for i in 0..<flatArray.count {
+            if (flatArray[i].type == ItemEnum.L2 &&
+                flatArray[i].parentId == groupId && flatArray[i].completed) {
+                indexArray.append(i)
+            }
+        }
+        
+        var unCompletedItems = [ItemModel]()
+        
+        for tuple in objectTree {
+            if (tuple.0.id == groupId) {
+                for item in tuple.1 {
+                    if (!item.completed) {
+                        unCompletedItems.append(item)
+                    }
+                }
+                break;
+            }
+        }
+        
+        for i in 0..<objectTree.count {
+            if (objectTree[i].0.id == groupId) {
+                objectTree[i].1.removeAll()
+                objectTree[i].1 = unCompletedItems
+                break
+            }
+        }
+        
+        return indexArray
+    }
+    
+    
+    //remove the item
     static func removeFromObjectTree(itemId: Int) {
         for i in 0..<objectTree.count {
             for idx in 0..<objectTree[i].1.count {
@@ -94,6 +133,7 @@ class JDataTree {
         }
     }
     
+    //get idx of group by groupId
     static func getGroupTupleIdx(groupId: Int) -> Int? {
         for i in 0..<objectTree.count {
             if (objectTree[i].0.id == groupId) {
@@ -103,6 +143,7 @@ class JDataTree {
         return nil
     }
     
+    //check whether the group is expanded ?
     static func isExpanded(groupId: Int) -> Bool {
         for val in objectTree {
             if (groupId == val.0.id) {
