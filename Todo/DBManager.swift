@@ -108,6 +108,19 @@ class DBManager {
         return items
     }
     
+    func updateGroupContent(itemId: Int, content: String) -> Void {
+        if (!database.open()) {
+            print("Error: failed to open DB")
+            return
+        }
+        
+        let sql = "UPDATE item_table SET content = ? WHERE id = ?"
+        let args : [AnyObject] = [content, itemId]
+        database.executeUpdate(sql, withArgumentsInArray: args)
+        
+        let _ : Bool = database.close()
+    }
+    
     func updateItemStatus(item: ItemModel) {
         if (!database.open()) {
             print("Error: failed to open DB")

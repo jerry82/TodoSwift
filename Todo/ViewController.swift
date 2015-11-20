@@ -18,6 +18,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     var newItemField: UITextField!
     var activeTextField: UITextField!
     
+    var updateGroupField: UITextField!
+    
     var currentSelectedGroupId: Int = -1
     var frameChanged = false
     
@@ -87,13 +89,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     func textFieldDidBeginEditing(textField: UITextField) {
         self.activeTextField = textField
         
+        
+        
         if (self.activeTextField == self.newGroupField) {
+            self.resetUpdateGroupCell()
             if (self.newItemField != nil) {
                 self.newItemField.resignFirstResponder()
                 self.newItemField.text = ""
             }
         }
         else if (self.activeTextField == self.newItemField) {
+            self.resetUpdateGroupCell()
             if (self.newGroupField != nil) {
                 self.newGroupField.resignFirstResponder()
                 self.newGroupField.text = ""
@@ -143,8 +149,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 }
                 newItemF.resignFirstResponder()
                 self.scrollToLastItem()
+                return true
             }
         }
+        
+        //text field for updating the Group
+        let cell: CellObject = textField.superview?.superview as! CellObject
+        if (textField.text != "") {
+            if (textField.text != cell.contentLabel.text) {
+                cell.contentLabel.text = textField.text
+                JDataTree.updateGroupContent(cell.itemId, content: textField.text!)
+                self.dbManager.updateGroupContent(cell.itemId, content: textField.text!)
+            }
+        }
+        
+        textField.hidden = true
+        cell.sign.hidden = false
+        cell.contentLabel.hidden = false
+        textField.resignFirstResponder()
+        self.updateGroupField = nil
         
         return true
     }
@@ -158,6 +181,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         return newString.length <= maxLength
     }
 
+    // MARK: Tableview Delegates
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return JDataTree.getFlatArray().count
     }
@@ -201,6 +225,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         var actions = [UITableViewRowAction]()
         let tupleId = JDataTree.getSelectedGroupId(indexPath.row)
         
+        self.resetUpdateGroupCell()
+        
         let deleteAction = UITableViewRowAction(style: UITableViewRowActionStyle.Destructive, title: "Delete", handler: {
             (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
             
@@ -219,6 +245,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         actions.append(deleteAction)
         
         if (tupleId.0 != -1) { //if row is Group:
+            //clean
             let cleanAction = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "Clean", handler: {
                 (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
                 
@@ -230,10 +257,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                     indexPaths.append(NSIndexPath(forRow: i, inSection: 0))
                 }
                 self.tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: UITableViewRowAnimation.Automatic)
-                
                 self.tableView.setEditing(false, animated: true)
             })
             actions.append(cleanAction)
+            
+            //edit
+            let editAction = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "Edit", handler: {
+                (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
+                
+                let cell: CellObject = self.tableView.cellForRowAtIndexPath(indexPath) as! CellObject
+                cell.contentLabel.hidden = true
+                cell.sign.hidden = true
+                cell.newItem.hidden = false
+                cell.newItem.text = cell.contentLabel.text
+                cell.newItem.selectAll(nil)
+                cell.newItem.delegate = self
+                self.updateGroupField = cell.newItem
+                
+                self.tableView.setEditing(false, animated: true)
+            })
+            actions.append(editAction)
         }
         
         return actions
@@ -254,6 +297,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             self.activeTextField.text = ""
             self.activeTextField.resignFirstResponder()
         }
+        
+        self.resetUpdateGroupCell()
         
         let selectedId = JDataTree.getSelectedGroupId(indexPath.row)
         
@@ -287,8 +332,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 self.tableView.deleteRowsAtIndexPaths(indexArray, withRowAnimation: UITableViewRowAnimation.Automatic)
             }
             else {
-                cell.changeSign(false)
-                
                 JDataTree.assignSubItems(idx!, items: items)
                 
                 currentSelectedGroupId = selectedId.0 //used to insert item
@@ -299,8 +342,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 
                 self.scrollToLastItem()
                 
+                cell.changeSign(false)
             }
-            
         }
         //select item: complete the item
         else if (selectedId.1 != -1){
@@ -356,6 +399,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     func insertItem(item: ItemModel) {
         let addIdx = JDataTree.insertItem(item, currentSelectedGroupId: self.currentSelectedGroupId)
         self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: addIdx, inSection: 0)], withRowAnimation: UITableViewRowAnimation.Automatic)
+    }
+    
+    func resetUpdateGroupCell() {
+        if (self.updateGroupField != nil && self.updateGroupField.hidden == false) {
+            if let cell: CellObject = self.updateGroupField.superview?.superview as? CellObject{
+                cell.newItem.selectedTextRange = nil
+                cell.contentLabel.hidden = false
+                cell.sign.hidden = false
+                cell.newItem.hidden = true
+            }
+        }
     }
 }
 

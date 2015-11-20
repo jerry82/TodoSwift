@@ -17,8 +17,12 @@ class CellObject : UITableViewCell {
     @IBOutlet var newItem: UITextField!
     @IBOutlet var newSubItem: UITextField!
     
+    var itemId: Int = -1
+    
     // MARK: Initialization
     func initWithStyle(item: ItemModel) {
+        
+        self.itemId = item.id
         
         switch (item.type) {
         case ItemEnum.L1:
@@ -52,7 +56,7 @@ class CellObject : UITableViewCell {
         self.contentLabel.hidden = hidden
         self.sign.hidden = hidden
         self.contentLabel.text = content
-        self.sign.text = hidden ? "" : CellConfig.GROUP_COLLAPSE_SIGN
+        self.sign.text = (self.sign.text == "") ? CellConfig.GROUP_COLLAPSE_SIGN : self.sign.text
         
         if (!hidden) {
             self.contentLabel.font = CellConfig.TABLECELL_GROUP_FONT

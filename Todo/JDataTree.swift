@@ -62,6 +62,15 @@ class JDataTree {
         return flatArray.count - 1
     }
     
+    static func updateGroupContent(itemId: Int, content: String) -> Void {
+        for i in 0..<objectTree.count {
+            if (objectTree[i].0.id == itemId) {
+                objectTree[i].0.content = content
+                break;
+            }
+        }
+    }
+    
     static func insertItem(item: ItemModel, currentSelectedGroupId: Int) -> Int {
         
         //find the L2_dummy cell
